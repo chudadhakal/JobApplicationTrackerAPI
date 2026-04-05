@@ -63,6 +63,6 @@
     <None Include="obj\Debug\JobApplicationTracker.SQL.sqlproj.AssemblyReference.cache" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="CreateDatabase.sql" />
+    <None Include="CreateDatabase.sql" />
   </ItemGroup>
 </Project>
