@@ -2,6 +2,7 @@
 using JobApplicationTracker.WebApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace JobApplicationTracker.WebApi.Controllers
@@ -39,6 +40,18 @@ namespace JobApplicationTracker.WebApi.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(application);
+        }
+
+        /// <summary>
+        /// Retrieving all job applications data from database 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetApplications")]
+        public async Task<IActionResult> GetApplications()
+        {
+            var applications = await _context.JobApplications.ToListAsync();
+            return Ok(applications);
         }
     }
 }
