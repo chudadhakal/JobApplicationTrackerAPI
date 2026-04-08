@@ -12,5 +12,6 @@ namespace JobApplicationTracker.WebApi.Data
         }
 
         public DbSet<JobApplication> JobApplications { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

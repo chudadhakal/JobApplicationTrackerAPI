@@ -36,7 +36,8 @@ namespace JobApplicationTracker.WebApi.Controllers
                 Position = model.JobTitle,
                 ApplicationDate = model.ApplicationDate,
                 Status = model.Status,
-                Notes = model.Notes
+                Notes = model.Notes,
+                UserId = model.UserId
             };
 
             // add to database
@@ -53,9 +54,9 @@ namespace JobApplicationTracker.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetApplications")]
-        public async Task<IActionResult> GetApplications()
+        public async Task<IActionResult> GetApplications(int userId)
         {
-            var applications = await _context.JobApplications.OrderByDescending(a => a.ApplicationDate).ToListAsync();
+            var applications = await _context.JobApplications.Where(a=>a.UserId==userId).OrderByDescending(a => a.ApplicationDate).ToListAsync();
           
             return Ok(applications);
         }
