@@ -26,14 +26,14 @@ namespace JobApplicationTracker.WebApi.Controllers
             // convert model to entity
             var user = new User
             {
-               FirstName = model.FirstName,
+                FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
                 Password = model.Password,
                 CreatedAt = model.CreatedAt,
                 IsVerified = model.IsVerified,
                 //JobApplications = model.JobApplications
-                };
+            };
 
             // add to database
             _context.Add(user);
@@ -41,6 +41,33 @@ namespace JobApplicationTracker.WebApi.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(user);
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login(LoginRequestModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Invalid email or password." });
+            }
+            return Ok(new
+            {
+                message = "Login successful.",
+                userId = user.Id,
+                firstName = user.FirstName,
+                lastName = user.LastName,
+                email = user.Email
+            });
+
+
+
         }
     }
 }
