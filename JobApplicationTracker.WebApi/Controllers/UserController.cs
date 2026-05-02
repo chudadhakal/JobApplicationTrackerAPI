@@ -30,8 +30,8 @@ namespace JobApplicationTracker.WebApi.Controllers
                 LastName = model.LastName,
                 Email = model.Email,
                 Password = model.Password,
-                CreatedAt = model.CreatedAt,
-                IsVerified = model.IsVerified,
+                CreatedAt = DateTime.Now,
+                IsVerified = false //always set default to false when creating user
                 //JobApplications = model.JobApplications
             };
 
@@ -45,7 +45,7 @@ namespace JobApplicationTracker.WebApi.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login(LoginRequestModel model)
+        public async Task<IActionResult> Login([FromBody]LoginRequestModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -60,10 +60,13 @@ namespace JobApplicationTracker.WebApi.Controllers
             return Ok(new
             {
                 message = "Login successful.",
-                userId = user.Id,
-                firstName = user.FirstName,
-                lastName = user.LastName,
-                email = user.Email
+                user = new
+                {
+                    id = user.Id,
+                    firstName = user.FirstName,
+                    lastName = user.LastName,
+                    email = user.Email
+                }
             });
 
 

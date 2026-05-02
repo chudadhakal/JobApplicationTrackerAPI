@@ -56,8 +56,8 @@ namespace JobApplicationTracker.WebApi.Controllers
         [Route("GetApplications")]
         public async Task<IActionResult> GetApplications(int userId)
         {
-            var applications = await _context.JobApplications.Where(a=>a.UserId==userId).OrderByDescending(a => a.ApplicationDate).ToListAsync();
-          
+            var applications = await _context.JobApplications.Where(a => a.UserId == userId).OrderByDescending(a => a.ApplicationDate).ToListAsync();
+
             return Ok(applications);
         }
 
@@ -84,8 +84,34 @@ namespace JobApplicationTracker.WebApi.Controllers
         [Route("GetApplicationsByStatus")]
         public async Task<IActionResult> GetApplicationsByStatus([FromQuery] string status)
         {
-            var applications = await _context.JobApplications.Where(a=>a.Status == status).OrderByDescending(a => a.ApplicationDate).ToListAsync();
+            var applications = await _context.JobApplications.Where(a => a.Status == status).OrderByDescending(a => a.ApplicationDate).ToListAsync();
             return Ok(applications);
+        }
+
+        /// <summary>
+        /// Update application
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("UpdateApplication")]
+        public async Task<IActionResult> UpdateApplication([FromQuery] int id, [FromBody] ApplicationRequestModel model)
+        {
+            //Check if id exist
+            var application = await _context.JobApplications.FindAsync(id);
+            if (application == null)
+            {
+                return NotFound($"Application with ID({id}) not found");
+            }
+            // Update the application properties with the new values from the model
+            application.CompanyName = model.CompanyName;
+            application.Position = model.JobTitle;
+            application.ApplicationDate = model.ApplicationDate;
+            application.Status = model.Status;
+            application.Notes = model.Notes;
+            // Save the changes to the database
+            await _context.SaveChangesAsync();
+            return Ok(application);
         }
 
         /// <summary>
@@ -97,7 +123,7 @@ namespace JobApplicationTracker.WebApi.Controllers
         [Route("DeleteApplication")]
         public async Task<IActionResult> DeleteApplication([FromQuery] int id)
         {
-            var applications = await _context.JobApplications.Where(a=>a.Id == id).ExecuteDeleteAsync();
+            var applications = await _context.JobApplications.Where(a => a.Id == id).ExecuteDeleteAsync();
             // return success msg
 
             if (applications == 0)

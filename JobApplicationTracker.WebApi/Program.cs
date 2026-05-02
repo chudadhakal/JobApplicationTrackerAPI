@@ -12,6 +12,35 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// middlewares
+//var allowOrigin = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowSpecificOrigins", policy =>
+//    {
+//        policy
+//            .WithOrigins(allowOrigin)
+//            .AllowAnyHeader()
+//            .AllowAnyMethod();
+//    });
+//});
+
+//This allows frontend localhost to call API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy
+            .WithOrigins(
+            "http://localhost:3000",
+            "https://localhost:3000",
+            "http://localhost:5173",
+            "https://localhost:5173"
+            )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -21,7 +50,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+app.UseCors("AllowLocalhost");
 
 app.UseAuthorization();
 
